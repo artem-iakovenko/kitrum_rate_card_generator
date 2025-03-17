@@ -222,4 +222,4 @@ def rate_card_generator():
     return rate_card_handler.rate_card_drive_id
 
 
-rate_card_generator()
+# rate_card_generator()
