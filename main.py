@@ -30,11 +30,11 @@ REGIONS_DATA = {
 }
 
 TEMPLATES = {
-    "1_reg": "1WhxjjxRxH3EvYU2ptF4jIAHuk625GkdN",
-    "2_reg": "1LUzmdDdJ3hjBV2_mVMahjwEZU5saYn9F",
-    "3_reg": "1p3mxuBbfX7b28Y0zcokKSsvZ4yJFd_k6",
-    "4_reg": "1wOjL1ttmxCvhbEZpz3uRQY3dcjHDnk90",
-    "5_reg": "1fKC0p2GIzj77u3C3_Al9SsyrSAZVi2lK"
+    "1_reg": "1FyGrmUQMr3XWXNcHoeSjFHexjfeTd_ni",
+    "2_reg": "1FBSMDWt6NC3qo4EDks9ghgRMyQRuxtqO",
+    "3_reg": "1qeJDe7wx3aem6az9qlwFipbPL7SrRdCQ",
+    "4_reg": "1BVR6oMyw92ytJCPNCMIJ2b0C3w-euKIO",
+    "5_reg": "1uBNzVbwrqyRgPZh875S0tE75D17TTx0K"
 }
 
 class RateCard:
@@ -45,7 +45,7 @@ class RateCard:
         self.drive_service = None
         self.rates_by_title_region = {}
         self.file_name = ""
-        self.shared_drive_id = "1mrSTc68wJyPO1MZQrJxlHGPmaLDoSAPM"
+        self.shared_drive_id = "1-VU-OtThHDrgyMCQlhYiLI-CqA2gGREb"
         self.rate_card_drive_id = None
 
     def init_drive(self):
@@ -222,4 +222,3 @@ def rate_card_generator():
     return rate_card_handler.rate_card_drive_id
 
 
-# rate_card_generator()
