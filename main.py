@@ -1,3 +1,4 @@
+import time
 from datetime import datetime
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
@@ -14,11 +15,11 @@ SPREADSHEET_ID = "1MhK40R1-GB4h8oTgq3624x7sLFCa7AD6TKLHlnWJDlU"
 SHEET_SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 DRIVE_SCOPES = ["https://www.googleapis.com/auth/drive"]
 CURRENCY_TEXT_SYMBOLS = {
-    "USD": "$",
-    "EUR": "€",
-    "GBP": "£",
-    "AUD": "A$",
-    "ZAR": "R"
+    "usd": "$",
+    "eur": "€",
+    "gbp": "£",
+    "aud": "A$",
+    "zar": "R"
 }
 
 REGIONS_DATA = {
@@ -38,8 +39,8 @@ TEMPLATES = {
 }
 
 class RateCard:
-    def __init__(self):
-        self.currency = None
+    def __init__(self, currency):
+        self.currency = currency
         self.rates = []
         self.regions = []
         self.drive_service = None
@@ -71,22 +72,23 @@ class RateCard:
         )
         service = build('sheets', 'v4', credentials=creds)
         sheet = service.spreadsheets()
-        self.currency = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range='Original External Rates (currency)!O2').execute()['values'][0][0]
-
-        if self.currency == "USD":
-            rates_rage = 'Original External Rates in USD!A:M'
+        # self.currency = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range='Original External Rates (currency)!O2').execute()['values'][0][0]
+        if self.currency == "usd":
+            rates_rage = 'Original External Rates in USD !A:M'
+            # self.regions = ['Europe* (Ukraine)', 'Latam', 'Europe', 'Central Asia', 'South Asia']
+            self.regions = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range='Original External Rates in USD !O5').execute()[
+                'values'][0][0].split(", ")
         else:
             rates_rage = 'Original External Rates (currency)!A:M'
+            self.regions = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range='Original External Rates (currency)!O5').execute()[
+                'values'][0][0].split(", ")
+        print(self.regions)
         rates = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range=rates_rage).execute()['values']
-
-        self.regions = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range='Original External Rates (currency)!O5').execute()['values'][0][0].split(", ")
-
         for rate in rates:
             if not rate:
                 continue
             if rate[0]:
                 self.rates.append(rate)
-
 
     def prepare_rates(self):
         header_row = self.rates[0]
@@ -109,10 +111,10 @@ class RateCard:
                 min_rate = rate_row[rate_indexes[1]].replace("$", "")
                 max_rate = rate_row[rate_indexes[1]].replace("$", "")
                 if min_rate == max_rate:
-                    if self.currency in ['EUR', "GBP", "USD"]:
+                    if self.currency in ['eur', "gbp", "usd"]:
                         rate_str = f"{CURRENCY_TEXT_SYMBOLS[self.currency]}{min_rate}"
                     else:
-                        rate_str = f"{min_rate} {self.currency}"
+                        rate_str = f"{min_rate} {self.currency.upper()}"
                 else:
                     rate_str = f"{CURRENCY_TEXT_SYMBOLS[self.currency]}{min_rate}-{CURRENCY_TEXT_SYMBOLS[self.currency]}{max_rate}/h"
                 rates_by_title[f"{title}_{region}"] = rate_str
@@ -212,8 +214,8 @@ class RateCard:
         self.clear_cache()
 
 
-def rate_card_generator():
-    rate_card_handler = RateCard()
+def rate_card_generator(currency):
+    rate_card_handler = RateCard(currency)
     try:
         rate_card_handler.generate_card()
     except Exception as e:
