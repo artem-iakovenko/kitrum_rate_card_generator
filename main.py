@@ -112,7 +112,9 @@ class RateCard:
                 min_rate = rate_row[rate_index].replace("$", "")
                 max_rate = rate_row[rate_index].replace("$", "")
                 if min_rate == max_rate:
-                    if self.currency in ['eur', "gbp", "usd"]:
+                    if not min_rate:
+                        rate_str = ""
+                    elif self.currency in ['eur', "gbp", "usd"]:
                         rate_str = f"{CURRENCY_TEXT_SYMBOLS[self.currency]}{min_rate}"
                     else:
                         rate_str = f"{min_rate} {self.currency.upper()}"
