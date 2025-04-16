@@ -74,13 +74,13 @@ class RateCard:
         sheet = service.spreadsheets()
         # self.currency = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range='Original External Rates (currency)!O2').execute()['values'][0][0]
         if self.currency == "usd":
-            rates_rage = 'Original External Rates in USD !A:M'
+            rates_rage = 'Original External Rates in USD !A:H'
             # self.regions = ['Europe* (Ukraine)', 'Latam', 'Europe', 'Central Asia', 'South Asia']
-            self.regions = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range='Original External Rates in USD !O5').execute()[
+            self.regions = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range='Original External Rates in USD !J5').execute()[
                 'values'][0][0].split(", ")
         else:
-            rates_rage = 'Original External Rates (currency)!A:M'
-            self.regions = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range='Original External Rates (currency)!O5').execute()[
+            rates_rage = 'Original External Rates (currency)!A:H'
+            self.regions = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range='Original External Rates (currency)!J5').execute()[
                 'values'][0][0].split(", ")
         print(self.regions)
         rates = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range=rates_rage).execute()['values']
@@ -94,22 +94,23 @@ class RateCard:
         header_row = self.rates[0]
         counter = 0
         regions = {
-            header_row[3]: [3, 4],
-            header_row[5]: [5, 6],
-            header_row[7]: [7, 8],
-            header_row[9]: [9, 10],
-            header_row[11]: [11, 12]
+            header_row[3]: 3,
+            header_row[4]: 4,
+            header_row[5]: 5,
+            header_row[6]: 6,
+            header_row[7]: 7
 
         }
         rates_by_title = {}
+
         for rate_row in self.rates:
             counter += 1
             if counter == 1:
                 continue
             title = rate_row[1].replace('Engeneer', 'Engineer').strip()
-            for region, rate_indexes in regions.items():
-                min_rate = rate_row[rate_indexes[1]].replace("$", "")
-                max_rate = rate_row[rate_indexes[1]].replace("$", "")
+            for region, rate_index in regions.items():
+                min_rate = rate_row[rate_index].replace("$", "")
+                max_rate = rate_row[rate_index].replace("$", "")
                 if min_rate == max_rate:
                     if self.currency in ['eur', "gbp", "usd"]:
                         rate_str = f"{CURRENCY_TEXT_SYMBOLS[self.currency]}{min_rate}"
